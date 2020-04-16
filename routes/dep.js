@@ -16,7 +16,7 @@ dep.get('/dep', (req, res) => {
 //Описание подразделения
 dep.get('/one_dep', (req, res) => {
     const val = req.query.iddep;
-    connection.query('SELECT *, COUNT(idperson) AS count FROM depart LEFT JOIN addr USING(idaddr) LEFT JOIN persons USING(iddep) WHERE iddep like ' + val + ' LIMIT 1', (err, rows) => {
+    connection.query('SELECT depart.*, addr.*, parent.sdep AS parent, parent.iddep AS idparent, COUNT(idperson) AS count FROM depart LEFT JOIN addr USING(idaddr) LEFT JOIN persons USING(iddep) LEFT JOIN depart AS parent ON depart.idparent=parent.iddep WHERE depart.iddep like ' + val + ' LIMIT 1', (err, rows) => {
         if (err) throw err;
         res.send(JSON.stringify(rows));
     });
@@ -34,13 +34,13 @@ dep.get('/list_dep', (req, res) => {
 //Добавить подразделение
 dep.post('/add_dep', (req, res) => {
 
-    const depart = req.body.depart;
+    const dep = req.body.dep;
     const sdep = req.body.sdep;
     const email = req.body.email;
     const idaddr = req.body.idaddr;
     const idparent = req.body.idparent;
 
-    connection.query('INSERT INTO depart (depart , sdep, email, idaddr, idparent) VALUES (?, ?, ?, ?, ?)', [depart, sdep, email, idaddr, idparent], (err, result) => {
+    connection.query('INSERT INTO depart (depart , sdep, email, idaddr, idparent) VALUES (?, ?, ?, ?, ?)', [dep, sdep, email, idaddr, idparent], (err, result) => {
         if (err) throw err;
         console.log("1 record inserted, ID: " + result.insertId);
         res.send("1");
@@ -50,14 +50,14 @@ dep.post('/add_dep', (req, res) => {
 //Обновить подразделение
 dep.post('/upd_dep', (req, res) => {
 
-    const depart = req.body.depart;
+    const dep = req.body.dep;
     const sdep = req.body.sdep;
     const email = req.body.email;
     const idaddr = req.body.idaddr;
     const idparent = req.body.idparent;
     const iddep = req.body.iddep;
 
-    const sql = 'UPDATE depart SET depart="' + depart + '", sdep="' + sdep + '", email="' + email + '", idaddr="' + idaddr + '", idparent="' + idparent + '" WHERE iddep="' + iddep + '"';
+    const sql = 'UPDATE depart SET depart="' + dep + '", sdep="' + sdep + '", email="' + email + '", idaddr="' + idaddr + '", idparent="' + idparent + '" WHERE iddep="' + iddep + '"';
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);

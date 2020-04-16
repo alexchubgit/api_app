@@ -11,18 +11,11 @@ const cors = require('cors');
 //const config = require('./config');
 //const withAuth = require('./middleware');
 
-const addr = require('./routes/addr');
-const auth = require('./routes/auth');
-const dep = require('./routes/dep');
-const persons = require('./routes/persons');
-const place = require('./routes/place');
-const pos = require('./routes/pos');
-const rank = require('./routes/rank');
-
-
 const port = process.env.PORT || 4200
 
 const app = express()
+
+app.use(cors());
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -33,8 +26,18 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
-app.use(cors());
+
 app.disable('x-powered-by');
+
+
+const addr = require('./routes/addr');
+const auth = require('./routes/auth');
+const dep = require('./routes/dep');
+const persons = require('./routes/persons');
+const place = require('./routes/place');
+const pos = require('./routes/pos');
+const rank = require('./routes/rank');
+
 
 //Connect all our routes to our application
 app.get('/addr', addr);
@@ -66,6 +69,7 @@ app.post('/upd_person', persons);
 app.post('/del_person', persons);
 
 app.get('/place', place);
+app.get('/one_place', place);
 app.post('/add_place', place);
 app.post('/upd_place', place);
 app.post('/del_place', place);

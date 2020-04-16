@@ -14,6 +14,15 @@ place.get('/place', (req, res) => {
     });
 });
 
+//Одно рабочее место
+place.get('/one_place', (req, res) => {
+    const val = req.query.idplace;
+    connection.query('SELECT * FROM places LEFT JOIN persons USING(idperson) LEFT JOIN addr USING(idaddr) WHERE idplace like ' + val + ' LIMIT 1', (err, rows) => {
+        if (err) throw err;
+        res.send(JSON.stringify(rows));
+    });
+});
+
 //Добавить рабочее место
 place.post('/add_place', (req, res) => {
 
