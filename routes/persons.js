@@ -96,7 +96,7 @@ persons.post('/add_person', (req, res) => {
     form.encoding = 'utf-8';
     form.maxFileSize = 20 * 1024 * 1024;
     form.hash = 'sha1';
-    form.uploadDir = __dirname + "/public/photo/";
+    form.uploadDir = __dirname + "/../public/photo/";
     form.keepExtensions = true;
 
     form.parse(req, (err, fields, files) => {
@@ -110,7 +110,7 @@ persons.post('/add_person', (req, res) => {
             console.log(file)
         }
 
-        //console.log(fields);
+        console.log(fields);
         //console.log(files.image);
     })
 
@@ -124,7 +124,7 @@ persons.post('/add_person_old', (req, res) =>{
     form.encoding = 'utf-8';
     form.maxFileSize = 20 * 1024 * 1024;
     form.hash = 'sha1';
-    form.uploadDir = __dirname + "/../public/photo/";
+    form.uploadDir = __dirname + "/public/photo/";
     form.keepExtensions = true;
 
     form.parse(req, (err, fields, files)=>{
@@ -214,7 +214,7 @@ persons.post('/upd_person', (req, res) => {
     form.encoding = 'utf-8';
     form.maxFileSize = 20 * 1024 * 1024;
     form.hash = 'sha1';
-    form.uploadDir = __dirname + "/../public/photo/";
+    form.uploadDir = __dirname + "/public/photo/";
     form.keepExtensions = true;
 
     form.parse(req, (err, fields, files) => {
