@@ -99,35 +99,8 @@ persons.post('/add_person', (req, res) => {
     form.uploadDir = __dirname + "/../public/photo/";
     form.keepExtensions = true;
 
+
     form.parse(req, (err, fields, files) => {
-
-        if (err) {
-            console.error(err);
-            throw err
-        }
-
-        for (const file of Object.entries(files)) {
-            console.log(file)
-        }
-
-        console.log(fields);
-        //console.log(files.image);
-    })
-
-    return res.send('POST HTTP method on user resource');
-});
-
-//Добавление сотрудника с загрузкой фото (старое)
-persons.post('/add_person_old', (req, res) =>{
-
-    const form = new formidable.IncomingForm();
-    form.encoding = 'utf-8';
-    form.maxFileSize = 20 * 1024 * 1024;
-    form.hash = 'sha1';
-    form.uploadDir = __dirname + "/public/photo/";
-    form.keepExtensions = true;
-
-    form.parse(req, (err, fields, files)=>{
 
         if (err) console.error(err);
 
@@ -181,7 +154,7 @@ persons.post('/add_person_old', (req, res) =>{
                 const newname = md5(Math.random()) + path.extname(files.file.name).toLowerCase();
 
                 //Переименовываем загруженный файл
-                fs.rename(files.file.path, form.uploadDir + newname, (err)=>{
+                fs.rename(files.file.path, form.uploadDir + newname, (err) => {
                     if (err) throw err;
                 });
 
@@ -205,7 +178,25 @@ persons.post('/add_person_old', (req, res) =>{
             }
         }
     });
+
+    // form.parse(req, (err, fields, files) => {
+
+    //     if (err) {
+    //         console.error(err);
+    //         throw err
+    //     }
+
+    //     for (const file of Object.entries(files)) {
+    //         console.log(file)
+    //     }
+
+    //     console.log(fields);
+    //     //console.log(files.image);
+    // })
+
+    //return res.send('POST HTTP method on user resource');
 });
+
 
 //Обновить сотрудника
 persons.post('/upd_person', (req, res) => {
@@ -214,7 +205,7 @@ persons.post('/upd_person', (req, res) => {
     form.encoding = 'utf-8';
     form.maxFileSize = 20 * 1024 * 1024;
     form.hash = 'sha1';
-    form.uploadDir = __dirname + "/public/photo/";
+    form.uploadDir = __dirname + "/../public/photo/";
     form.keepExtensions = true;
 
     form.parse(req, (err, fields, files) => {
