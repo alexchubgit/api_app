@@ -47,7 +47,7 @@ addr.post('/add_addr', (req, res) => {
 });
 
 //Обновить адрес
-addr.post('/upd_addr', (req, res) => {
+addr.put('/upd_addr', (req, res) => {
 
     const idaddr = req.body.idaddr;
     const addr = req.body.addr;
@@ -64,7 +64,7 @@ addr.post('/upd_addr', (req, res) => {
 });
 
 //Удаление адреса
-addr.post('/del_addr', (req, res) => {
+addr.delete('/del_addr', (req, res) => {
 
     const idaddr = req.body.idaddr;
 

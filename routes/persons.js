@@ -21,6 +21,18 @@ persons.get('/persons', (req, res) => {
     });
 });
 
+//Список уволенных людей
+persons.get('/dismissed', (req, res) => {
+    //const val = req.query.iddep;
+    //const val = req.body.iddep;
+    const val = 0;
+
+    connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN ranks USING(idrank) WHERE iddep = " + val + " ORDER BY name", (err, rows) => {
+        if (err) throw err;
+        res.send(JSON.stringify(rows));
+    });
+});
+
 //Описание одного сотрудника
 persons.get('/one_person', (req, res) => {
     const val = req.query.idperson;
@@ -56,7 +68,7 @@ persons.get('/dates', (req, res) => {
 //Дни рождения сотрудников сегодня
 persons.get('/dates_today', (req, res) => {
     const day = new Date().toISOString().substr(5, 5);
-    const sql = "SELECT *, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN rank USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`";
+    const sql = "SELECT *, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`";
     connection.query(sql, (err, rows) => {
         if (err) throw err;
         res.send(JSON.stringify(rows));
@@ -88,6 +100,21 @@ persons.get('/search', (req, res) => {
         });
     }
 });
+
+
+//Уволить сотрудника
+persons.post('/dismiss', (req, res) => {
+    const idperson = req.body.idperson;
+
+    const sql = 'UPDATE persons SET iddep="0", idpos="0", idrole="0" WHERE idperson="' + idperson + '"';
+    connection.query(sql, (err, result) => {
+        if (err) throw err;
+        console.log(`Changed ${result.changedRows} row(s)`);
+        res.send("1");
+    });
+
+});
+
 
 //Загрузка файла
 persons.post('/add_person', (req, res) => {
@@ -199,7 +226,7 @@ persons.post('/add_person', (req, res) => {
 
 
 //Обновить сотрудника
-persons.post('/upd_person', (req, res) => {
+persons.put('/upd_person', (req, res) => {
 
     const form = new formidable.IncomingForm();
     form.encoding = 'utf-8';
@@ -283,7 +310,7 @@ persons.post('/upd_person', (req, res) => {
 
 
 //Удаление сотрудника
-persons.post('/del_person', (req, res) => {
+persons.delete('/del_person', (req, res) => {
 
     const idperson = req.body.idperson;
 

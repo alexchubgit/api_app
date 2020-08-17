@@ -44,8 +44,8 @@ app.get('/addr', addr);
 app.get('/one_addr', addr);
 app.get('/list_addr', addr);
 app.post('/add_addr', addr);
-app.post('/upd_addr', addr);
-app.post('/del_addr', addr);
+app.put('/upd_addr', addr);
+app.delete('/del_addr', addr);
 
 app.post('/login', auth);
 app.get('/checktoken', auth);
@@ -55,18 +55,20 @@ app.get('/dep', dep);
 app.get('/one_dep', dep);
 app.get('/list_dep', dep);
 app.post('/add_dep', dep);
-app.post('/upd_dep', dep);
-app.post('/del_dep', dep);
+app.put('/upd_dep', dep);
+app.delete('/del_dep', dep);
 
 app.get('/persons', persons);
+app.get('/dismissed', persons);
 app.get('/one_person', persons);
 app.get('/list_persons', persons);
 app.get('/dates', persons);
 app.get('/dates_today', persons);
 app.get('/search', persons);
 app.post('/add_person', persons);
-app.post('/upd_person', persons);
-app.post('/del_person', persons);
+app.post('/dismiss', persons);
+app.put('/upd_person', persons);
+app.delete('/del_person', persons);
 
 app.get('/place', place);
 app.get('/one_place', place);

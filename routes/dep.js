@@ -48,7 +48,7 @@ dep.post('/add_dep', (req, res) => {
 });
 
 //Обновить подразделение
-dep.post('/upd_dep', (req, res) => {
+dep.put('/upd_dep', (req, res) => {
 
     const dep = req.body.dep;
     const sdep = req.body.sdep;
@@ -66,9 +66,9 @@ dep.post('/upd_dep', (req, res) => {
 });
 
 //Удаление подразделения
-dep.post('/del_dep', (req, res) => {
+dep.delete('/del_dep', (req, res) => {
 
-    const iddep = req.body.iddep;
+    const iddep = req.query.iddep;
     connection.query('DELETE FROM depart WHERE iddep = "' + iddep + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
