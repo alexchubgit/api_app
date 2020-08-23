@@ -42,7 +42,7 @@ pos.post('/add_pos', (req, res) => {
 });
 
 //Обновить должность
-pos.post('/upd_pos', (req, res) => {
+pos.put('/upd_pos', (req, res) => {
     const idpos = req.body.idpos;
     const pos = req.body.pos;
     const sql = 'UPDATE pos SET pos="' + pos + '" WHERE idpos="' + idpos + '"';
@@ -55,8 +55,10 @@ pos.post('/upd_pos', (req, res) => {
 
 
 //Удаление должности
-pos.post('/del_pos', (req, res) => {
+pos.delete('/del_pos', (req, res) => {
+
     const idpos = req.body.idpos;
+
     connection.query('DELETE FROM pos WHERE idpos = "' + idpos + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);

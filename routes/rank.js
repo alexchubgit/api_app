@@ -42,7 +42,7 @@ rank.post('/add_rank', (req, res) => {
 });
 
 //Обновить звание
-rank.post('/upd_rank', (req, res) => {
+rank.put('/upd_rank', (req, res) => {
     const idrank = req.body.idrank;
     const rank = req.body.rank;
     const sql = 'UPDATE ranks SET rank="' + rank + '" WHERE idrank="' + idrank + '"';
@@ -54,8 +54,10 @@ rank.post('/upd_rank', (req, res) => {
 });
 
 //Удаление звание
-rank.post('/del_rank', (req, res) => {
+rank.delete('/del_rank', (req, res) => {
+
     const idrank = req.body.idrank;
+
     connection.query('DELETE FROM ranks WHERE idrank = "' + idrank + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);

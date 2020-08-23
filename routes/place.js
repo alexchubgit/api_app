@@ -42,7 +42,7 @@ place.post('/add_place', (req, res) => {
 });
 
 //Обновить рабочее место
-place.post('/upd_place', (req, res) => {
+place.put('/upd_place', (req, res) => {
 
     const place = req.body.place;
     const work = req.body.work;
@@ -62,9 +62,11 @@ place.post('/upd_place', (req, res) => {
 });
 
 //Удаление рабочего места
-place.post('/del_place', (req, res)=>{
+place.delete('/del_place', (req, res) => {
+
     const idplace = req.body.idplace;
-    connection.query('DELETE FROM places WHERE idplace = "' + idplace + '"', (err, result)=>{
+
+    connection.query('DELETE FROM places WHERE idplace = "' + idplace + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
         res.send("1");
@@ -72,10 +74,10 @@ place.post('/del_place', (req, res)=>{
 });
 
 //Убрать сотрудника с места
-place.post('/del_person_place', (req, res)=>{
+place.post('/del_person_place', (req, res) => {
     const idplace = req.body.idplace;
     const sql = 'UPDATE places SET idperson="0" WHERE idplace="' + idplace + '"';
-    connection.query(sql, (err, result)=>{
+    connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
         res.send("1");

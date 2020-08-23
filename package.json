@@ -1,11 +1,11 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "api",
+  "description": "phones api",
   "main": "app.js",
   "scripts": {
     "start": "nodejs app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": ""
   },
   "repository": {
     "type": "git",

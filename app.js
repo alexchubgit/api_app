@@ -4,10 +4,8 @@ const express = require('express');
 const cors = require('cors');
 
 //const mysql = require('mysql');
-//const session = require('express-session');
 //const md5 = require('md5');
 //const jwt = require('jsonwebtoken');
-//const formidable = require('formidable'); //Обработчик форм FormData()
 //const config = require('./config');
 //const withAuth = require('./middleware');
 
@@ -29,7 +27,6 @@ app.use(express.static('public'));
 
 app.disable('x-powered-by');
 
-
 const addr = require('./routes/addr');
 const auth = require('./routes/auth');
 const dep = require('./routes/dep');
@@ -37,7 +34,6 @@ const persons = require('./routes/persons');
 const place = require('./routes/place');
 const pos = require('./routes/pos');
 const rank = require('./routes/rank');
-
 
 //Connect all our routes to our application
 app.get('/addr', addr);
@@ -73,23 +69,23 @@ app.delete('/del_person', persons);
 app.get('/place', place);
 app.get('/one_place', place);
 app.post('/add_place', place);
-app.post('/upd_place', place);
-app.post('/del_place', place);
 app.post('/del_person_place', place);
+app.put('/upd_place', place);
+app.delete('/del_place', place);
 
 app.get('/pos', pos);
 app.get('/one_pos', pos);
 app.get('/list_pos', pos);
 app.post('/add_pos', pos);
-app.post('/upd_pos', pos);
-app.post('/del_pos', pos);
+app.put('/upd_pos', pos);
+app.delete('/del_pos', pos);
 
 app.get('/rank', rank);
 app.get('/one_rank', rank);
 app.get('/list_rank', rank);
 app.post('/add_rank', rank);
-app.post('/upd_rank', rank);
-app.post('/del_rank', rank);
+app.put('/upd_rank', rank);
+app.delete('/del_rank', rank);
 
 
 //Start Express server on defined port

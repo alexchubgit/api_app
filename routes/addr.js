@@ -67,6 +67,7 @@ addr.put('/upd_addr', (req, res) => {
 addr.delete('/del_addr', (req, res) => {
 
     const idaddr = req.body.idaddr;
+    console.log(idaddr);
 
     connection.query('DELETE FROM addr WHERE idaddr = "' + idaddr + '"', (err, result) => {
         if (err) throw err;

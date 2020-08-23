@@ -1,6 +1,8 @@
 node_modules
-public/photo
 .git
-config.js
 package-lock.json
+public/photo
+config.js
+centos.sql
+
 

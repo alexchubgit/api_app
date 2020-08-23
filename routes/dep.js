@@ -68,7 +68,9 @@ dep.put('/upd_dep', (req, res) => {
 //Удаление подразделения
 dep.delete('/del_dep', (req, res) => {
 
-    const iddep = req.query.iddep;
+    const iddep = req.body.iddep;
+    console.log(iddep);
+
     connection.query('DELETE FROM depart WHERE iddep = "' + iddep + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
