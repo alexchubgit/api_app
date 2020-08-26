@@ -2,6 +2,7 @@
 
 const express = require('express');
 const dep = express.Router();
+const withAuth = require('../middleware');
 const connection = require('../connection');
 
 
@@ -32,7 +33,7 @@ dep.get('/list_dep', (req, res) => {
 });
 
 //Добавить подразделение
-dep.post('/add_dep', (req, res) => {
+dep.post('/add_dep', withAuth, (req, res) => {
 
     const dep = req.body.dep;
     const sdep = req.body.sdep;
@@ -48,7 +49,7 @@ dep.post('/add_dep', (req, res) => {
 });
 
 //Обновить подразделение
-dep.put('/upd_dep', (req, res) => {
+dep.put('/upd_dep', withAuth, (req, res) => {
 
     const dep = req.body.dep;
     const sdep = req.body.sdep;
@@ -66,7 +67,7 @@ dep.put('/upd_dep', (req, res) => {
 });
 
 //Удаление подразделения
-dep.delete('/del_dep', (req, res) => {
+dep.delete('/del_dep', withAuth, (req, res) => {
 
     const iddep = req.body.iddep;
     console.log(iddep);

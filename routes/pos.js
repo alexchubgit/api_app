@@ -2,6 +2,7 @@
 
 const express = require('express');
 const pos = express.Router();
+const withAuth = require('../middleware');
 const connection = require('../connection');
 
 
@@ -32,7 +33,7 @@ pos.get('/list_pos', (req, res) => {
 });
 
 //Добавить должность
-pos.post('/add_pos', (req, res) => {
+pos.post('/add_pos', withAuth, (req, res) => {
     const pos = req.body.pos;
     connection.query("INSERT INTO pos (pos) VALUES (?)", [pos], (err, result) => {
         if (err) throw err;
@@ -42,7 +43,7 @@ pos.post('/add_pos', (req, res) => {
 });
 
 //Обновить должность
-pos.put('/upd_pos', (req, res) => {
+pos.put('/upd_pos', withAuth, (req, res) => {
     const idpos = req.body.idpos;
     const pos = req.body.pos;
     const sql = 'UPDATE pos SET pos="' + pos + '" WHERE idpos="' + idpos + '"';
@@ -55,7 +56,7 @@ pos.put('/upd_pos', (req, res) => {
 
 
 //Удаление должности
-pos.delete('/del_pos', (req, res) => {
+pos.delete('/del_pos', withAuth, (req, res) => {
 
     const idpos = req.body.idpos;
 

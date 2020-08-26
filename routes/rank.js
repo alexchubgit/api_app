@@ -2,6 +2,7 @@
 
 const express = require('express');
 const rank = express.Router();
+const withAuth = require('../middleware');
 const connection = require('../connection');
 
 
@@ -32,7 +33,7 @@ rank.get('/list_rank', (req, res) => {
 });
 
 //Добавить звание
-rank.post('/add_rank', (req, res) => {
+rank.post('/add_rank', withAuth, (req, res) => {
     const rank = req.body.rank;
     connection.query("INSERT INTO ranks (rank) VALUES (?)", [rank], (err, result) => {
         if (err) throw err;
@@ -42,7 +43,7 @@ rank.post('/add_rank', (req, res) => {
 });
 
 //Обновить звание
-rank.put('/upd_rank', (req, res) => {
+rank.put('/upd_rank', withAuth, (req, res) => {
     const idrank = req.body.idrank;
     const rank = req.body.rank;
     const sql = 'UPDATE ranks SET rank="' + rank + '" WHERE idrank="' + idrank + '"';
@@ -54,7 +55,7 @@ rank.put('/upd_rank', (req, res) => {
 });
 
 //Удаление звание
-rank.delete('/del_rank', (req, res) => {
+rank.delete('/del_rank', withAuth, (req, res) => {
 
     const idrank = req.body.idrank;
 

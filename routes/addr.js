@@ -2,11 +2,15 @@
 
 const express = require('express');
 const addr = express.Router();
+const withAuth = require('../middleware');
 const connection = require('../connection');
 
 
 //Список адресов
-addr.get('/addr', (req, res) => {
+addr.get('/addr', withAuth, (req, res) => {
+
+    console.log(req.decoded.name);
+
     connection.query("SELECT * FROM addr ORDER BY `addr`", (err, rows) => {
         if (err) throw err;
         res.send(JSON.stringify(rows));
@@ -32,7 +36,9 @@ addr.get('/list_addr', (req, res) => {
 });
 
 //Добавить адрес
-addr.post('/add_addr', (req, res) => {
+addr.post('/add_addr', withAuth, (req, res) => {
+
+    console.log(req.decoded.name);
 
     const addr = req.body.addr;
     const postcode = req.body.postcode;
@@ -47,7 +53,9 @@ addr.post('/add_addr', (req, res) => {
 });
 
 //Обновить адрес
-addr.put('/upd_addr', (req, res) => {
+addr.put('/upd_addr', withAuth, (req, res) => {
+
+    console.log(req.decoded.name);
 
     const idaddr = req.body.idaddr;
     const addr = req.body.addr;
@@ -64,7 +72,9 @@ addr.put('/upd_addr', (req, res) => {
 });
 
 //Удаление адреса
-addr.delete('/del_addr', (req, res) => {
+addr.delete('/del_addr', withAuth, (req, res) => {
+
+    console.log(req.decoded.name);
 
     const idaddr = req.body.idaddr;
     console.log(idaddr);

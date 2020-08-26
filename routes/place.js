@@ -2,6 +2,7 @@
 
 const express = require('express');
 const place = express.Router();
+const withAuth = require('../middleware');
 const connection = require('../connection');
 
 
@@ -24,7 +25,7 @@ place.get('/one_place', (req, res) => {
 });
 
 //Добавить рабочее место
-place.post('/add_place', (req, res) => {
+place.post('/add_place', withAuth, (req, res) => {
 
     const place = req.body.place;
     const work = req.body.work;
@@ -42,7 +43,7 @@ place.post('/add_place', (req, res) => {
 });
 
 //Обновить рабочее место
-place.put('/upd_place', (req, res) => {
+place.put('/upd_place', withAuth, (req, res) => {
 
     const place = req.body.place;
     const work = req.body.work;
@@ -62,7 +63,7 @@ place.put('/upd_place', (req, res) => {
 });
 
 //Удаление рабочего места
-place.delete('/del_place', (req, res) => {
+place.delete('/del_place', withAuth, (req, res) => {
 
     const idplace = req.body.idplace;
 
@@ -74,7 +75,7 @@ place.delete('/del_place', (req, res) => {
 });
 
 //Убрать сотрудника с места
-place.post('/del_person_place', (req, res) => {
+place.post('/del_person_place', withAuth, (req, res) => {
     const idplace = req.body.idplace;
     const sql = 'UPDATE places SET idperson="0" WHERE idplace="' + idplace + '"';
     connection.query(sql, (err, result) => {

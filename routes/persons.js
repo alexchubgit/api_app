@@ -6,6 +6,7 @@ const md5 = require('md5'); //Работа с хэшами MD5
 const fs = require('fs'); //Работа с файловой системой
 const path = require('path');
 const formidable = require('formidable'); //Обработчик форм FormData()
+const withAuth = require('../middleware');
 const connection = require('../connection');
 
 
@@ -59,7 +60,7 @@ persons.get('/list_persons', (req, res) => {
 
 //Дни рождения
 persons.get('/dates', (req, res) => {
-    connection.query("Select *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date from persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) where date_format(now()+interval 7 day,'%m-%d')>date_format(date,'%m-%d') and date_format(now(),'%m-%d')<date_format(date,'%m-%d') ORDER BY `name`", (err, rows) => {
+    connection.query("SELECT *, IF(file IS NULL OR file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date from persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE date_format(now()+interval 7 day,'%m-%d')>date_format(date,'%m-%d') AND date_format(now(),'%m-%d')<date_format(date,'%m-%d') AND iddep != 0 ORDER BY `name`", (err, rows) => {
         if (err) throw err;
         res.send(JSON.stringify(rows));
     });
@@ -87,14 +88,14 @@ persons.get('/search', (req, res) => {
 
     if (regexp_num.test(val) == true) {
 
-        connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.cellular like "%' + val + '%" OR persons.business like "%' + val + '%" OR places.work like "%' + val + '%" ORDER BY persons.idperson LIMIT 10', (err, rows) => {
+        connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.cellular like "%' + val + '%" OR persons.business like "%' + val + '%" OR places.work like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
             if (err) throw err;
             res.send(JSON.stringify(rows));
         });
 
     } else if (regexp_alph.test(val) == true) {
 
-        connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.name like "%' + val + '%" ORDER BY persons.idperson LIMIT 10', (err, rows) => {
+        connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.name like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
             if (err) throw err;
             res.send(JSON.stringify(rows));
         });
@@ -103,7 +104,7 @@ persons.get('/search', (req, res) => {
 
 
 //Уволить сотрудника
-persons.post('/dismiss', (req, res) => {
+persons.put('/dismiss', withAuth, (req, res) => {
     const idperson = req.body.idperson;
 
     const sql = 'UPDATE persons SET iddep="0", idpos="0", idrole="0" WHERE idperson="' + idperson + '"';
@@ -117,7 +118,7 @@ persons.post('/dismiss', (req, res) => {
 
 
 //Загрузка файла
-persons.post('/add_person', (req, res) => {
+persons.post('/add_person', withAuth, (req, res) => {
 
     const form = new formidable.IncomingForm();
     form.encoding = 'utf-8';
@@ -226,7 +227,7 @@ persons.post('/add_person', (req, res) => {
 
 
 //Обновить сотрудника
-persons.put('/upd_person', (req, res) => {
+persons.put('/upd_person', withAuth, (req, res) => {
 
     const form = new formidable.IncomingForm();
     form.encoding = 'utf-8';
@@ -310,7 +311,7 @@ persons.put('/upd_person', (req, res) => {
 
 
 //Удаление сотрудника
-persons.delete('/del_person', (req, res) => {
+persons.delete('/del_person', withAuth, (req, res) => {
 
     const idperson = req.body.idperson;
 

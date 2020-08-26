@@ -3,12 +3,6 @@
 const express = require('express');
 const cors = require('cors');
 
-//const mysql = require('mysql');
-//const md5 = require('md5');
-//const jwt = require('jsonwebtoken');
-//const config = require('./config');
-//const withAuth = require('./middleware');
-
 const port = process.env.PORT || 4200
 
 const app = express()
@@ -44,8 +38,6 @@ app.put('/upd_addr', addr);
 app.delete('/del_addr', addr);
 
 app.post('/login', auth);
-app.get('/checktoken', auth);
-app.get('/api/secret', auth);
 
 app.get('/dep', dep);
 app.get('/one_dep', dep);
@@ -62,7 +54,7 @@ app.get('/dates', persons);
 app.get('/dates_today', persons);
 app.get('/search', persons);
 app.post('/add_person', persons);
-app.post('/dismiss', persons);
+app.put('/dismiss', persons);
 app.put('/upd_person', persons);
 app.delete('/del_person', persons);
 
