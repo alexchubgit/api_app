@@ -80,7 +80,7 @@ persons.get('/dates_today', (req, res) => {
 //Поиск сотрудника
 persons.get('/search', (req, res) => {
     const val = req.query.query;
-    console.log(val);
+    //console.log(val);
 
     //регулярные выражения по проверке цифр и букв
     const regexp_alph = /[a-zа-я\s]/i;

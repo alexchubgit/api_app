@@ -19,7 +19,7 @@ auth.post('/login', (req, res) => {
 
         //здесь проверяем авторизацию и создаем токен
         if (rows.length == 0) {
-            res.json({ message: 'Запрос не выполнен' });
+            res.json({ message: 'Логин или пароль указаны не верно' });
         } else {
             payload = {
                 idperson: rows[0].idperson,
@@ -33,7 +33,7 @@ auth.post('/login', (req, res) => {
                 expiresIn: 60 * 60 * 24 // истекает через 24 часа 
             });
 
-            res.json({ message: 'Запрос выполнен', token: token });
+            res.json({ message: 'Запрос выполнен. Токен получен', token: token });
 
         }
     })

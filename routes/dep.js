@@ -70,7 +70,6 @@ dep.put('/upd_dep', withAuth, (req, res) => {
 dep.delete('/del_dep', withAuth, (req, res) => {
 
     const iddep = req.body.iddep;
-    console.log(iddep);
 
     connection.query('DELETE FROM depart WHERE iddep = "' + iddep + '"', (err, result) => {
         if (err) throw err;

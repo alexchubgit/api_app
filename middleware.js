@@ -25,23 +25,25 @@ const withAuth = (req, res, next) => {
     const authHeader = req.get('Authorization');
 
     if (!authHeader) {
-        res.status(401).json({ message: "Token not provided!" });
+        res.status(401).json({ success: false, message: "Token not provided!" });
     }
 
     const token = authHeader.replace('token ', '')
 
-    console.log('middleware ' + token);
+    //console.log('middleware ' + token);
 
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
 
-        console.log('decode ' + decoded.role + ' ' + decoded.name);
+        //res.status(401).json({ success: true, message: 'Good to authenticate token.' });
+
+        //console.log('decode ' + decoded.role + ' ' + decoded.name);
         req.decoded = decoded;
         next();
 
     } catch (e) {
         if (e instanceof jwt.JsonWebTokenError) {
-            res.status(401).json({ message: "Token invalid!" });
+            res.status(401).json({ success: false, message: "Token invalid!" });
         }
     }
 }
