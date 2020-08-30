@@ -18,7 +18,7 @@ persons.get('/persons', (req, res) => {
 
     connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE iddep like " + val + " ORDER BY name", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -30,7 +30,7 @@ persons.get('/dismissed', (req, res) => {
 
     connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN ranks USING(idrank) WHERE iddep = " + val + " ORDER BY name", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -42,7 +42,7 @@ persons.get('/one_person', (req, res) => {
 
     connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE idperson like " + val + " LIMIT 1", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -54,7 +54,7 @@ persons.get('/list_persons', (req, res) => {
 
     connection.query('SELECT * FROM persons LEFT JOIN depart USING(iddep) WHERE name like "%' + val + '%" LIMIT 5', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -62,7 +62,7 @@ persons.get('/list_persons', (req, res) => {
 persons.get('/dates', (req, res) => {
     connection.query("SELECT *, IF(file IS NULL OR file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date from persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE date_format(now()+interval 7 day,'%m-%d')>date_format(date,'%m-%d') AND date_format(now(),'%m-%d')<date_format(date,'%m-%d') AND iddep != 0 ORDER BY `name`", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -72,7 +72,7 @@ persons.get('/dates_today', (req, res) => {
     const sql = "SELECT *, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`";
     connection.query(sql, (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -90,14 +90,14 @@ persons.get('/search', (req, res) => {
 
         connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.cellular like "%' + val + '%" OR persons.business like "%' + val + '%" OR places.work like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
             if (err) throw err;
-            res.send(JSON.stringify(rows));
+            res.json(rows);
         });
 
     } else if (regexp_alph.test(val) == true) {
 
         connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.name like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
             if (err) throw err;
-            res.send(JSON.stringify(rows));
+            res.json(rows);
         });
     }
 });
@@ -111,7 +111,7 @@ persons.put('/dismiss', withAuth, (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 
 });
@@ -162,7 +162,7 @@ persons.post('/add_person', withAuth, (req, res) => {
                 if (err) throw err;
                 console.log("1 record inserted, ID: " + result.insertId);
 
-                res.send("1");
+                res.json({ success: true, message: 'Запрос выполнен' });
             });
 
         } else {
@@ -193,7 +193,7 @@ persons.post('/add_person', withAuth, (req, res) => {
 
                     //connection.end();
 
-                    res.send("1");
+                    res.json({ success: true, message: 'Запрос выполнен' });
                 });
 
             } else {
@@ -265,7 +265,7 @@ persons.put('/upd_person', withAuth, (req, res) => {
                 if (err) throw err;
 
                 console.log("1 record inserted, ID: " + result.insertId);
-                res.send("1");
+                res.json({ success: true, message: 'Запрос выполнен' });
             });
 
         } else {
@@ -295,7 +295,7 @@ persons.put('/upd_person', withAuth, (req, res) => {
                     if (err) throw err;
 
                     console.log("1 record inserted, ID: " + result.insertId);
-                    res.send("1");
+                    res.json({ success: true, message: 'Запрос выполнен' });
                 });
 
             } else {
@@ -333,7 +333,7 @@ persons.delete('/del_person', withAuth, (req, res) => {
 
             });
 
-            res.send("1");
+            res.json({ success: true, message: 'Запрос выполнен' });
 
         } else {
             //console.log('Deleting with a file.\n');
@@ -350,7 +350,7 @@ persons.delete('/del_person', withAuth, (req, res) => {
 
             });
 
-            res.send("1");
+            res.json({ success: true, message: 'Запрос выполнен' });
 
         }
     });

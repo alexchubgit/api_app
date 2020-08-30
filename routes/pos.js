@@ -10,7 +10,7 @@ const connection = require('../connection');
 pos.get('/pos', (req, res) => {
     connection.query("SELECT * FROM pos ORDER BY `pos`", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -19,7 +19,7 @@ pos.get('/one_pos', (req, res) => {
     const val = req.query.idpos;
     connection.query('SELECT * FROM pos WHERE idpos like ' + val + ' LIMIT 1', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -28,7 +28,7 @@ pos.get('/list_pos', (req, res) => {
     const val = req.query.query;
     connection.query('SELECT * FROM pos WHERE pos like "%' + val + '%" LIMIT 5', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -38,7 +38,7 @@ pos.post('/add_pos', withAuth, (req, res) => {
     connection.query("INSERT INTO pos (pos) VALUES (?)", [pos], (err, result) => {
         if (err) throw err;
         console.log("1 record inserted, ID: " + result.insertId);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -50,7 +50,7 @@ pos.put('/upd_pos', withAuth, (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -63,7 +63,7 @@ pos.delete('/del_pos', withAuth, (req, res) => {
     connection.query('DELETE FROM pos WHERE idpos = "' + idpos + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 

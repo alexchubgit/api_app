@@ -10,7 +10,7 @@ const connection = require('../connection');
 rank.get('/rank', (req, res) => {
     connection.query("SELECT * FROM ranks ORDER BY `rank`", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -19,7 +19,7 @@ rank.get('/one_rank', (req, res) => {
     const val = req.query.idrank;
     connection.query('SELECT * FROM ranks WHERE idrank like ' + val + ' LIMIT 1', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -28,7 +28,7 @@ rank.get('/list_rank', (req, res) => {
     const val = req.query.query;
     connection.query('SELECT * FROM ranks WHERE rank like "%' + val + '%" LIMIT 5', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -38,7 +38,7 @@ rank.post('/add_rank', withAuth, (req, res) => {
     connection.query("INSERT INTO ranks (rank) VALUES (?)", [rank], (err, result) => {
         if (err) throw err;
         console.log("1 record inserted, ID: " + result.affectedRows);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -50,7 +50,7 @@ rank.put('/upd_rank', withAuth, (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -62,7 +62,7 @@ rank.delete('/del_rank', withAuth, (req, res) => {
     connection.query('DELETE FROM ranks WHERE idrank = "' + idrank + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 

@@ -19,7 +19,7 @@ auth.post('/login', (req, res) => {
 
         //здесь проверяем авторизацию и создаем токен
         if (rows.length == 0) {
-            res.json({ message: 'Логин или пароль указаны не верно' });
+            res.json({ success: false, message: 'Логин или пароль указаны неверно' });
         } else {
             payload = {
                 idperson: rows[0].idperson,
@@ -33,10 +33,39 @@ auth.post('/login', (req, res) => {
                 expiresIn: 60 * 60 * 24 // истекает через 24 часа 
             });
 
-            res.json({ message: 'Запрос выполнен. Токен получен', token: token });
+            res.json({ success: true, message: 'Запрос выполнен. Токен получен', token: token });
 
         }
     })
 })
+
+auth.get('/getuser', (req, res) => {
+
+    //Проверка токена из видео урока
+    const authHeader = req.get('Authorization');
+
+    if (!authHeader) {
+        res.status(401).json({ success: false, message: "Token not provided!" });
+    }
+
+    const token = authHeader.replace('token ', '')
+
+    //console.log('middleware ' + token);
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+
+        //ошибка заголовков
+        //res.status(200).json({ success: true, message: 'Good to authenticate token.' });
+
+        //console.log('decode ' + decoded.role + ' ' + decoded.name);
+        res.send(decoded);
+
+    } catch (e) {
+        if (e instanceof jwt.JsonWebTokenError) {
+            res.status(401).json({ success: false, message: "Token invalid!" });
+        }
+    }
+});
 
 module.exports = auth;

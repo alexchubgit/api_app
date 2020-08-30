@@ -11,7 +11,7 @@ place.get('/place', (req, res) => {
     const idaddr = req.query.idaddr;
     connection.query('SELECT * FROM places LEFT JOIN persons USING(idperson) WHERE idaddr = ' + idaddr + ' ORDER BY place;', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -20,7 +20,7 @@ place.get('/one_place', (req, res) => {
     const val = req.query.idplace;
     connection.query('SELECT * FROM places LEFT JOIN persons USING(idperson) LEFT JOIN addr USING(idaddr) WHERE idplace like ' + val + ' LIMIT 1', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -38,7 +38,7 @@ place.post('/add_place', withAuth, (req, res) => {
     connection.query('INSERT INTO places (place, work, internal, fax, email, idaddr, idperson) VALUES (?, ?, ?, ?, ?, ?, ?)', [place, work, internal, fax, email, idaddr, idperson], (err, result) => {
         if (err) throw err;
         console.log("1 record inserted, ID: " + result.insertId);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -58,7 +58,7 @@ place.put('/upd_place', withAuth, (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -70,7 +70,7 @@ place.delete('/del_place', withAuth, (req, res) => {
     connection.query('DELETE FROM places WHERE idplace = "' + idplace + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -81,7 +81,7 @@ place.post('/del_person_place', withAuth, (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 

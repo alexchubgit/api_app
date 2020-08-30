@@ -35,7 +35,8 @@ const withAuth = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
 
-        //res.status(401).json({ success: true, message: 'Good to authenticate token.' });
+        //ошибка заголовков
+        //res.status(200).json({ success: true, message: 'Good to authenticate token.' });
 
         //console.log('decode ' + decoded.role + ' ' + decoded.name);
         req.decoded = decoded;

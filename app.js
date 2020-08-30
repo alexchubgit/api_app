@@ -38,6 +38,7 @@ app.put('/upd_addr', addr);
 app.delete('/del_addr', addr);
 
 app.post('/login', auth);
+app.get('/getuser', auth);
 
 app.get('/dep', dep);
 app.get('/one_dep', dep);

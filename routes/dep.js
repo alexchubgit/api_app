@@ -10,7 +10,7 @@ const connection = require('../connection');
 dep.get('/dep', (req, res) => {
     connection.query("SELECT * FROM depart ORDER BY `sdep`", (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -19,7 +19,7 @@ dep.get('/one_dep', (req, res) => {
     const val = req.query.iddep;
     connection.query('SELECT depart.*, addr.*, parent.sdep AS parent, parent.iddep AS idparent, COUNT(idperson) AS count FROM depart LEFT JOIN addr USING(idaddr) LEFT JOIN persons USING(iddep) LEFT JOIN depart AS parent ON depart.idparent=parent.iddep WHERE depart.iddep like ' + val + ' LIMIT 1', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -28,7 +28,7 @@ dep.get('/list_dep', (req, res) => {
     const val = req.query.query;
     connection.query('SELECT * FROM depart WHERE sdep like "%' + val + '%" LIMIT 5', (err, rows) => {
         if (err) throw err;
-        res.send(JSON.stringify(rows));
+        res.json(rows);
     });
 });
 
@@ -44,7 +44,7 @@ dep.post('/add_dep', withAuth, (req, res) => {
     connection.query('INSERT INTO depart (depart , sdep, email, idaddr, idparent) VALUES (?, ?, ?, ?, ?)', [dep, sdep, email, idaddr, idparent], (err, result) => {
         if (err) throw err;
         console.log("1 record inserted, ID: " + result.insertId);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -62,7 +62,7 @@ dep.put('/upd_dep', withAuth, (req, res) => {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         console.log(`Changed ${result.changedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
@@ -74,7 +74,7 @@ dep.delete('/del_dep', withAuth, (req, res) => {
     connection.query('DELETE FROM depart WHERE iddep = "' + iddep + '"', (err, result) => {
         if (err) throw err;
         console.log(`Deleted ${result.affectedRows} row(s)`);
-        res.send("1");
+        res.json({ success: true, message: 'Запрос выполнен' });
     });
 });
 
