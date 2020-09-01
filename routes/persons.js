@@ -12,22 +12,20 @@ const connection = require('../connection');
 
 //Список людей в конкретном подразделении
 persons.get('/persons', (req, res) => {
-    const val = req.query.iddep;
-    //const val = req.body.iddep;
-    //const val = 10;
-
-    connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE iddep like " + val + " ORDER BY name", (err, rows) => {
-        if (err) throw err;
-        res.json(rows);
-    });
+    const iddep = req.query.iddep;
+    if (iddep !== undefined) {
+        connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE iddep like " + iddep + " ORDER BY name", (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Список уволенных людей
 persons.get('/dismissed', (req, res) => {
-    //const val = req.query.iddep;
-    //const val = req.body.iddep;
     const val = 0;
-
     connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN ranks USING(idrank) WHERE iddep = " + val + " ORDER BY name", (err, rows) => {
         if (err) throw err;
         res.json(rows);
@@ -36,26 +34,28 @@ persons.get('/dismissed', (req, res) => {
 
 //Описание одного сотрудника
 persons.get('/one_person', (req, res) => {
-    const val = req.query.idperson;
-    //const val = req.body.iddep;
-    //const val = 10;
-
-    connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE idperson like " + val + " LIMIT 1", (err, rows) => {
-        if (err) throw err;
-        res.json(rows);
-    });
+    const idperson = req.query.idperson;
+    if (idperson !== undefined) {
+        connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE idperson like " + idperson + " LIMIT 1", (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Список для поиска сотрудников
 persons.get('/list_persons', (req, res) => {
-    const val = req.query.query;
-    //const val = req.body.iddep;
-    //const val = 10;
-
-    connection.query('SELECT * FROM persons LEFT JOIN depart USING(iddep) WHERE name like "%' + val + '%" LIMIT 5', (err, rows) => {
-        if (err) throw err;
-        res.json(rows);
-    });
+    const query = req.query.query;
+    if (query !== undefined) {
+        connection.query('SELECT * FROM persons LEFT JOIN depart USING(iddep) WHERE name like "%' + query + '%" LIMIT 5', (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Дни рождения
@@ -69,8 +69,7 @@ persons.get('/dates', (req, res) => {
 //Дни рождения сотрудников сегодня
 persons.get('/dates_today', (req, res) => {
     const day = new Date().toISOString().substr(5, 5);
-    const sql = "SELECT *, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`";
-    connection.query(sql, (err, rows) => {
+    connection.query("SELECT *, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`", (err, rows) => {
         if (err) throw err;
         res.json(rows);
     });
@@ -80,25 +79,24 @@ persons.get('/dates_today', (req, res) => {
 //Поиск сотрудника
 persons.get('/search', (req, res) => {
     const val = req.query.query;
-    //console.log(val);
+    if (val !== undefined) {
+        //регулярные выражения по проверке цифр и букв
+        const regexp_alph = /[a-zа-я\s]/i;
+        const regexp_num = /^[0-9 \-()+]{2,16}$/i;
 
-    //регулярные выражения по проверке цифр и букв
-    const regexp_alph = /[a-zа-я\s]/i;
-    const regexp_num = /^[0-9 \-()+]{2,16}$/i;
-
-    if (regexp_num.test(val) == true) {
-
-        connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.cellular like "%' + val + '%" OR persons.business like "%' + val + '%" OR places.work like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
-            if (err) throw err;
-            res.json(rows);
-        });
-
-    } else if (regexp_alph.test(val) == true) {
-
-        connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.name like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
-            if (err) throw err;
-            res.json(rows);
-        });
+        if (regexp_num.test(val) == true) {
+            connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.cellular like "%' + val + '%" OR persons.business like "%' + val + '%" OR places.work like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
+                if (err) throw err;
+                res.json(rows);
+            });
+        } else if (regexp_alph.test(val) == true) {
+            connection.query('SELECT *, date_format(date,"%Y-%m-%d") AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN places USING(idperson) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE persons.name like "%' + val + '%" AND iddep != 0 ORDER BY persons.idperson LIMIT 10', (err, rows) => {
+                if (err) throw err;
+                res.json(rows);
+            });
+        }
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
     }
 });
 
@@ -106,14 +104,15 @@ persons.get('/search', (req, res) => {
 //Уволить сотрудника
 persons.put('/dismiss', withAuth, (req, res) => {
     const idperson = req.body.idperson;
-
-    const sql = 'UPDATE persons SET iddep="0", idpos="0", idrole="0" WHERE idperson="' + idperson + '"';
-    connection.query(sql, (err, result) => {
-        if (err) throw err;
-        console.log(`Changed ${result.changedRows} row(s)`);
-        res.json({ success: true, message: 'Запрос выполнен' });
-    });
-
+    if (idperson !== undefined) {
+        connection.query('UPDATE persons SET iddep="0", idpos="0", idrole="0" WHERE idperson="' + idperson + '"', (err, result) => {
+            if (err) throw err;
+            console.log(`Changed ${result.changedRows} row(s)`);
+            res.json({ success: true, message: 'Запрос выполнен' });
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 

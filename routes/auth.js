@@ -15,28 +15,34 @@ auth.post('/login', (req, res) => {
     const password = md5(req.body.password);
     let payload = {}
 
-    connection.query('SELECT * FROM persons LEFT JOIN role USING(idrole) WHERE `cellular` = "' + login + '" AND `passwd` = "' + password + '" OR `business` = "' + login + '" AND `passwd` = "' + password + '" LIMIT 1', (err, rows) => {
+    if ((login !== undefined) && (password !== undefined)) {
 
-        //здесь проверяем авторизацию и создаем токен
-        if (rows.length == 0) {
-            res.json({ success: false, message: 'Логин или пароль указаны неверно' });
-        } else {
-            payload = {
-                idperson: rows[0].idperson,
-                name: rows[0].name,
-                phone: rows[0].cellular,
-                role: rows[0].role
-            };
+        connection.query('SELECT * FROM persons LEFT JOIN role USING(idrole) WHERE `cellular` = "' + login + '" AND `passwd` = "' + password + '" OR `business` = "' + login + '" AND `passwd` = "' + password + '" LIMIT 1', (err, rows) => {
 
-            //здесь создается JWT
-            const token = jwt.sign(payload, SECRET_KEY, {
-                expiresIn: 60 * 60 * 24 // истекает через 24 часа 
-            });
+            //здесь проверяем авторизацию и создаем токен
+            if (rows.length == 0) {
+                res.json({ success: false, message: 'Логин или пароль указаны неверно' });
+            } else {
+                payload = {
+                    idperson: rows[0].idperson,
+                    name: rows[0].name,
+                    phone: rows[0].cellular,
+                    role: rows[0].role
+                };
 
-            res.json({ success: true, message: 'Запрос выполнен. Токен получен', token: token });
+                //здесь создается JWT
+                const token = jwt.sign(payload, SECRET_KEY, {
+                    expiresIn: 60 * 60 * 24 // истекает через 24 часа 
+                });
 
-        }
-    })
+                res.json({ success: true, message: 'Запрос выполнен. Токен получен', token: token });
+
+            }
+        })
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
+
 })
 
 auth.get('/getuser', (req, res) => {

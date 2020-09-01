@@ -16,54 +16,72 @@ rank.get('/rank', (req, res) => {
 
 //Одно звание
 rank.get('/one_rank', (req, res) => {
-    const val = req.query.idrank;
-    connection.query('SELECT * FROM ranks WHERE idrank like ' + val + ' LIMIT 1', (err, rows) => {
-        if (err) throw err;
-        res.json(rows);
-    });
+    const idrank = req.query.idrank;
+    if (idrank !== undefined) {
+        connection.query('SELECT * FROM ranks WHERE idrank like ' + idrank + ' LIMIT 1', (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Список для поиска званий
 rank.get('/list_rank', (req, res) => {
-    const val = req.query.query;
-    connection.query('SELECT * FROM ranks WHERE rank like "%' + val + '%" LIMIT 5', (err, rows) => {
-        if (err) throw err;
-        res.json(rows);
-    });
+    const query = req.query.query;
+    if (query !== undefined) {
+        connection.query('SELECT * FROM ranks WHERE rank like "%' + query + '%" LIMIT 5', (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Добавить звание
 rank.post('/add_rank', withAuth, (req, res) => {
     const rank = req.body.rank;
-    connection.query("INSERT INTO ranks (rank) VALUES (?)", [rank], (err, result) => {
-        if (err) throw err;
-        console.log("1 record inserted, ID: " + result.affectedRows);
-        res.json({ success: true, message: 'Запрос выполнен' });
-    });
+    if (rank !== undefined) {
+        connection.query("INSERT INTO ranks (rank) VALUES (?)", [rank], (err, result) => {
+            if (err) throw err;
+            console.log("1 record inserted, ID: " + result.affectedRows);
+            res.json({ success: true, message: 'Запрос выполнен' });
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Обновить звание
 rank.put('/upd_rank', withAuth, (req, res) => {
     const idrank = req.body.idrank;
     const rank = req.body.rank;
-    const sql = 'UPDATE ranks SET rank="' + rank + '" WHERE idrank="' + idrank + '"';
-    connection.query(sql, (err, result) => {
-        if (err) throw err;
-        console.log(`Changed ${result.changedRows} row(s)`);
-        res.json({ success: true, message: 'Запрос выполнен' });
-    });
+    if ((idrank !== undefined) && (rank !== undefined)){
+        connection.query('UPDATE ranks SET rank="' + rank + '" WHERE idrank="' + idrank + '"', (err, result) => {
+            if (err) throw err;
+            console.log(`Changed ${result.changedRows} row(s)`);
+            res.json({ success: true, message: 'Запрос выполнен' });
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 //Удаление звание
 rank.delete('/del_rank', withAuth, (req, res) => {
 
     const idrank = req.body.idrank;
-
-    connection.query('DELETE FROM ranks WHERE idrank = "' + idrank + '"', (err, result) => {
-        if (err) throw err;
-        console.log(`Deleted ${result.affectedRows} row(s)`);
-        res.json({ success: true, message: 'Запрос выполнен' });
-    });
+    if (idrank !== undefined) {
+        connection.query('DELETE FROM ranks WHERE idrank = "' + idrank + '"', (err, result) => {
+            if (err) throw err;
+            console.log(`Deleted ${result.affectedRows} row(s)`);
+            res.json({ success: true, message: 'Запрос выполнен' });
+        });
+    } else {
+        res.json({ success: 'false', message: 'Запрос передан без параметра' });
+    }
 });
 
 
