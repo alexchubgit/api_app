@@ -4,7 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const port = process.env.NODE_PORT || 4200
+//const port = process.env.NODE_PORT || 4200
+const port = 4200
 
 const app = express()
 
