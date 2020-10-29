@@ -5,8 +5,10 @@ const auth = express.Router();
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const connection = require('../connection');
+const config = require('../config'); //Файл конфигурации
 
-const SECRET_KEY = 'cAtwa1kkEy'
+
+const SECRET_KEY = config.jwt.secret;
 
 //Авторизация
 auth.post('/login', (req, res) => {

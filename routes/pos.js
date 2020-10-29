@@ -31,7 +31,7 @@ pos.get('/one_pos', (req, res) => {
 pos.get('/list_pos', (req, res) => {
     const query = req.query.query;
     if (query !== undefined) {
-        connection.query('SELECT * FROM pos WHERE pos like "%' + val + '%" LIMIT 5', (err, rows) => {
+        connection.query('SELECT * FROM pos WHERE pos like "%' + query + '%" LIMIT 5', (err, rows) => {
             if (err) throw err;
             res.json(rows);
         });

@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'cAtwa1kkEy';
+const config = require('./config'); //Файл конфигурации
+
+const SECRET_KEY = config.jwt.secret;
 
 const withAuth = (req, res, next) => {
 

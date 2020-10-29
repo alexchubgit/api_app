@@ -2,8 +2,9 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
-const port = process.env.PORT || 4200
+const port = process.env.NODE_PORT || 4200
 
 const app = express()
 
@@ -14,6 +15,9 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
 });
+
+//Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -80,6 +84,10 @@ app.post('/add_rank', rank);
 app.put('/upd_rank', rank);
 app.delete('/del_rank', rank);
 
+//Path to React Build
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
 
 //Start Express server on defined port
 app.listen(port);

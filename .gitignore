@@ -2,7 +2,9 @@ node_modules
 .git
 package-lock.json
 public/photo
+client/build
 config.js
-dump.sql
+notebook.sql
+
 
 
