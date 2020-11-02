@@ -68,8 +68,9 @@ persons.get('/dates', (req, res) => {
 
 //Дни рождения сотрудников сегодня
 persons.get('/dates_today', (req, res) => {
+    //const day = '11-02';
     const day = new Date().toISOString().substr(5, 5);
-    connection.query("SELECT *, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`", (err, rows) => {
+    connection.query("SELECT *, IF(file IS NULL OR file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) LEFT JOIN pos USING(idpos) LEFT JOIN ranks USING(idrank) WHERE DATE_FORMAT(date, '%m-%d') like '" + day + "' ORDER BY `name`", (err, rows) => {
         if (err) throw err;
         res.json(rows);
     });
