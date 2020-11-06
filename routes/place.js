@@ -84,7 +84,7 @@ place.delete('/del_place', withAuth, (req, res) => {
 });
 
 //Убрать сотрудника с места
-place.post('/del_person_place', withAuth, (req, res) => {
+place.put('/del_person_place', withAuth, (req, res) => {
     const idplace = req.body.idplace;
     if (idplace !== undefined) {
         const sql = 'UPDATE places SET idperson="0" WHERE idplace="' + idplace + '"';

@@ -67,7 +67,7 @@ app.delete('/del_person', persons);
 app.get('/place', place);
 app.get('/one_place', place);
 app.post('/add_place', place);
-app.post('/del_person_place', place);
+app.put('/del_person_place', place);
 app.put('/upd_place', place);
 app.delete('/del_place', place);
 

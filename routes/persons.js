@@ -106,10 +106,38 @@ persons.get('/search', (req, res) => {
 persons.put('/dismiss', withAuth, (req, res) => {
     const idperson = req.body.idperson;
     if (idperson !== undefined) {
-        connection.query('UPDATE persons SET iddep="0", idpos="0", idrole="0" WHERE idperson="' + idperson + '"', (err, result) => {
-            if (err) throw err;
-            console.log(`Changed ${result.changedRows} row(s)`);
-            res.json({ success: true, message: 'Запрос выполнен' });
+
+        connection.getConnection(function (err, conn) {
+
+            conn.beginTransaction(function (err) {
+                if (err) { throw err; }
+
+                conn.query('UPDATE persons SET iddep="0", idpos="0", idrole="0" WHERE idperson="' + idperson + '"', (err, result) => {
+                    if (err) {
+                        conn.rollback(function () {
+                            throw err;
+                        });
+                    }
+                    //console.log(`Changed ${result.changedRows} row(s)`);
+                    
+                    conn.query('UPDATE places SET idperson="0" WHERE idperson="' + idperson + '"', (err, result) => {
+                        if (err) {
+                            conn.rollback(function () {
+                                throw err;
+                            });
+                        }
+                        conn.commit(function (err) {
+                            if (err) {
+                                conn.rollback(function () {
+                                    throw err;
+                                });
+                            }
+                            console.log('success!');
+                            res.json({ success: true, message: 'Запрос выполнен' });
+                        });
+                    });
+                });
+            });
         });
     } else {
         res.json({ success: 'false', message: 'Запрос передан без параметра' });
