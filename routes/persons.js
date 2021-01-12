@@ -6,8 +6,49 @@ const md5 = require('md5'); //Работа с хэшами MD5
 const fs = require('fs'); //Работа с файловой системой
 const path = require('path');
 const formidable = require('formidable'); //Обработчик форм FormData()
+const redis = require('redis');
 const withAuth = require('../middleware');
 const connection = require('../connection');
+
+
+//Create and connect redis client to local instance.
+const client = redis.createClient();
+
+//Print redis errors to the console
+client.on('error', (err) => {
+    console.log("Error " + err);
+});
+
+// create an api/search route
+persons.get('/api/search', (req, res) => {
+    // Extract the query from url and trim trailing spaces
+    const query = (req.query.query).trim();
+    // Build the Wikipedia API url
+    const searchUrl = `https://en.wikipedia.org/w/api.php?action=parse&format=json&section=0&page=${query}`;
+
+    // Try fetching the result from Redis first in case we have it cached
+    return client.get(`wikipedia:${query}`, (err, result) => {
+        // If that key exist in Redis store
+        if (result) {
+            const resultJSON = JSON.parse(result);
+            return res.status(200).json(resultJSON);
+        } else { // Key does not exist in Redis store
+            // Fetch directly from Wikipedia API
+            return axios.get(searchUrl)
+                .then(response => {
+                    const responseJSON = response.data;
+                    // Save the Wikipedia API response in Redis store
+                    client.setex(`wikipedia:${query}`, 3600, JSON.stringify({ source: 'Redis Cache', ...responseJSON, }));
+                    // Send JSON response to client
+                    return res.status(200).json({ source: 'Wikipedia API', ...responseJSON, });
+                })
+                .catch(err => {
+                    return res.json(err);
+                });
+        }
+    });
+});
+
 
 
 //Список людей в конкретном подразделении
@@ -119,7 +160,7 @@ persons.put('/dismiss', withAuth, (req, res) => {
                         });
                     }
                     //console.log(`Changed ${result.changedRows} row(s)`);
-                    
+
                     conn.query('UPDATE places SET idperson="0" WHERE idperson="' + idperson + '"', (err, result) => {
                         if (err) {
                             conn.rollback(function () {
@@ -382,6 +423,16 @@ persons.delete('/del_person', withAuth, (req, res) => {
 
         }
     });
+});
+
+
+//Список людей в конкретном подразделении
+persons.get('/request', (req, res) => {
+    connection.query("SELECT *, IF(file IS NULL or file = '', 'photo.png', file) as file, date_format(date,'%Y-%m-%d') AS date FROM persons LEFT JOIN depart USING(iddep) ORDER BY name LIMIT 3", (err, rows) => {
+        if (err) throw err;
+        res.json(rows);
+    });
+
 });
 
 

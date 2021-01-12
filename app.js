@@ -63,6 +63,7 @@ app.post('/add_person', persons);
 app.put('/dismiss', persons);
 app.put('/upd_person', persons);
 app.delete('/del_person', persons);
+app.get('/request', persons);
 
 app.get('/place', place);
 app.get('/one_place', place);
@@ -91,7 +92,7 @@ app.get('/', (req, res) => {
 });
 
 //Start Express server on defined port
-app.listen(port);
+module.exports = app.listen(port);
 
 //Log to console to let us know it's working
 console.log('API server started on: ' + port);
