@@ -33,12 +33,12 @@ place.post('/add_place', withAuth, (req, res) => {
     const place = req.body.place;
     const work = req.body.work;
     const internal = req.body.internal;
-    const fax = req.body.fax;
-    const email = req.body.email;
+    const ipphone = req.body.ipphone;
+    const arm = req.body.arm;
     const idaddr = req.body.idaddr;
     const idperson = req.body.idperson;
     if (place !== undefined) {
-        connection.query('INSERT INTO places (place, work, internal, fax, email, idaddr, idperson) VALUES (?, ?, ?, ?, ?, ?, ?)', [place, work, internal, fax, email, idaddr, idperson], (err, result) => {
+        connection.query('INSERT INTO places (place, work, internal, ipphone, arm, idaddr, idperson) VALUES (?, ?, ?, ?, ?, ?, ?)', [place, work, internal, ipphone, arm, idaddr, idperson], (err, result) => {
             if (err) throw err;
             console.log("1 record inserted, ID: " + result.insertId);
             res.json({ success: true, message: 'Запрос выполнен' });
@@ -53,13 +53,13 @@ place.put('/upd_place', withAuth, (req, res) => {
     const place = req.body.place;
     const work = req.body.work;
     const internal = req.body.internal;
-    const fax = req.body.fax;
-    const email = req.body.email;
+    const ipphone = req.body.ipphone;
+    const arm = req.body.arm;
     const idaddr = req.body.idaddr;
     const idperson = req.body.idperson;
     const idplace = req.body.idplace;
     if (idplace !== undefined) {
-        connection.query('UPDATE places SET place="' + place + '", work="' + work + '", internal="' + internal + '", fax="' + fax + '", email="' + email + '", idaddr="' + idaddr + '", idperson="' + idperson + '" WHERE idplace="' + idplace + '"', (err, result) => {
+        connection.query('UPDATE places SET place="' + place + '", work="' + work + '", internal="' + internal + '", ipphone="' + ipphone + '", arm="' + arm + '", idaddr="' + idaddr + '", idperson="' + idperson + '" WHERE idplace="' + idplace + '"', (err, result) => {
             if (err) throw err;
             console.log(`Changed ${result.changedRows} row(s)`);
             res.json({ success: true, message: 'Запрос выполнен' });
